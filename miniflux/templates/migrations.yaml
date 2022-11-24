@@ -1,0 +1,52 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ include "miniflux.fullname" . }}-migrations"
+  labels:
+    {{- include "miniflux.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "0"
+spec:
+  template:
+    metadata:
+      name: "{{ include "miniflux.fullname" . }}-migrations"
+      labels:
+        {{- include "miniflux.labels" . | nindent 8}}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}-migrations
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: {{ include "miniflux.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          command: ["miniflux"]
+          args: ["-migrate"]
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "postgresql.secretName" .Subcharts.postgresql }}
+                  key: {{ include "postgresql.userPasswordKey" .Subcharts.postgresql }}
+            - name: DATABASE_URL
+              value: "postgres://{{ include "postgresql.username" .Subcharts.postgresql }}:$(POSTGRES_PASSWORD)@{{ include "postgresql.primary.fullname" .Subcharts.postgresql }}/{{ include "postgresql.database" .Subcharts.postgresql }}?sslmode=disable"
+            {{- if .Values.debug }}
+            - name: DEBUG
+              value: "1"
+            {{- end }}
+      restartPolicy: {{ .Values.migrations.restartPolicy }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
