@@ -24,6 +24,20 @@ entries:
   miniflux:
   - apiVersion: v2
     appVersion: 2.0.40
+    created: "2022-12-06T17:04:34.085949569Z"
+    dependencies:
+    - name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.1.3
+    description: Miniflux is a minimalist and opinionated feed reader.
+    digest: 3d49adfe438a178a75ddcdf91c3c265a4ec5d26e206200665fec7872f26dcc2a
+    name: miniflux
+    type: application
+    urls:
+    - https://github.com/NyCodeGHG/personal-charts/releases/download/miniflux-0.1.1/miniflux-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: 2.0.40
     created: "2022-12-06T16:37:49.336522407Z"
     dependencies:
     - name: postgresql
@@ -36,4 +50,4 @@ entries:
     urls:
     - https://github.com/NyCodeGHG/personal-charts/releases/download/miniflux-0.1.0/miniflux-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-06T16:37:49.336535607Z"
+generated: "2022-12-06T17:04:34.085964469Z"
