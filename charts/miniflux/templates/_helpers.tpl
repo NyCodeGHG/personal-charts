@@ -72,42 +72,42 @@ Create the Image string to use
 Determine admin secret name
 */}}
 {{- define "miniflux.admin-secret" -}}
-{{- default .Values.auth.existingSecret (printf "%s-admin-secret" (include "miniflux.fullname" .)) }}
+{{- .Values.auth.existingSecret | default (printf "%s-admin-secret" (include "miniflux.fullname" .)) }}
 {{- end }}
 
 {{/*
 Determine username secret key
 */}}
 {{- define "miniflux.admin-secret-username-key" -}}
-{{- default .Values.auth.secretKeys.username "username" }}
+{{- .Values.auth.secretKeys.username | default "username" }}
 {{- end }}
 
 {{/*
 Determine password secret key
 */}}
 {{- define "miniflux.admin-secret-password-key" -}}
-{{- default .Values.auth.secretKeys.password "password" }}
+{{- .Values.auth.secretKeys.password | default "password" }}
 {{- end }}
 
 {{/*
 Determine oauth secret name
 */}}
 {{- define "miniflux.oauth-secret" -}}
-{{- default .Values.auth.oauth2.existingSecret (printf "%s-oauth-secret" (include "miniflux.fullname" .)) }}
+{{- .Values.auth.oauth2.existingSecret | default (printf "%s-oauth-secret" (include "miniflux.fullname" .)) }}
 {{- end }}
 
 {{/*
 Determine oauth client-secret secret key
 */}}
 {{- define "miniflux.oauth-secret-client-secret-key" -}}
-{{- default .Values.auth.oauth2.secretKeys.clientSecret (printf "clientSecret") }}
+{{- .Values.auth.oauth2.secretKeys.clientSecret | default (printf "clientSecret") }}
 {{- end }}
 
 {{/*
 Determine oauth client-id secret key
 */}}
 {{- define "miniflux.oauth-secret-client-id-key" -}}
-{{- default .Values.auth.oauth2.secretKeys.clientId (printf "clientId") }}
+{{- .Values.auth.oauth2.secretKeys.clientId | default (printf "clientId") }}
 {{- end }}
 
 {{/*
@@ -134,13 +134,13 @@ Wait for Postgres init-container
     - "-c"
   {{- if (include "postgresql.database" .Subcharts.postgresql) }}
     - |
-        until pg_isready -U {{ default "postgres" $customUser | quote }} -d "dbname={{ include "postgresql.database" .Subcharts.postgresql }} {{- if and .Values.postgresql.tls.enabled .Values.postgresql.tls.certCAFilename }} sslcert={{ include "postgresql.tlsCert" .Subcharts.postgresql }} sslkey={{ include "postgresql.tlsCertKey" . }}{{- end }}" -h {{ $postgresHost }} -p {{ template "postgresql.service.port" .Subcharts.postgresql }}
+        until pg_isready -U {{ $customUser | default "postgres" | quote }} -d "dbname={{ include "postgresql.database" .Subcharts.postgresql }} {{- if and .Values.postgresql.tls.enabled .Values.postgresql.tls.certCAFilename }} sslcert={{ include "postgresql.tlsCert" .Subcharts.postgresql }} sslkey={{ include "postgresql.tlsCertKey" . }}{{- end }}" -h {{ $postgresHost }} -p {{ template "postgresql.service.port" .Subcharts.postgresql }}
         do
           sleep 2;
         done
   {{- else }}
     - |
-        until pg_isready -U {{ default "postgres" $customUser | quote }} {{- if and .Values.postgresql.tls.enabled .Values.postgresql.tls.certCAFilename }} -d "sslcert={{ include "postgresql.tlsCert" .Subcharts.postgresql }} sslkey={{ include "postgresql.tlsCertKey" .Subcharts.postgresql }}"{{- end }} -h {{ $postgresHost }} -p {{ template "postgresql.service.port" .Subcharts.postgresql }}
+        until pg_isready -U {{ $customUser | default "postgres" | quote }} {{- if and .Values.postgresql.tls.enabled .Values.postgresql.tls.certCAFilename }} -d "sslcert={{ include "postgresql.tlsCert" .Subcharts.postgresql }} sslkey={{ include "postgresql.tlsCertKey" .Subcharts.postgresql }}"{{- end }} -h {{ $postgresHost }} -p {{ template "postgresql.service.port" .Subcharts.postgresql }}
         do
           sleep 2;
         done
@@ -158,8 +158,5 @@ Determine ConfigMap name
 Determine Base URL.
 */}}
 {{- define "miniflux.baseUrl" -}}
-{{- if and .Values.ingress.enabled (not .Values.baseUrl) -}}
-{{ default .Values.baseUrl (index .Values.ingress.hosts 0).host }}
-{{- end -}}
-{{ default .Values.baseUrl }}
+{{ .Values.baseUrl | default .Values.ingressRoute.host }}
 {{- end }}

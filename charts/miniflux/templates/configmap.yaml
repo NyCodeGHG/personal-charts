@@ -15,4 +15,8 @@ data:
   discoveryEndpoint: {{ .Values.auth.oauth2.discoveryEndpoint | quote }}
   {{- end }}
   metricsRefreshInterval: {{ .Values.metrics.prometheus.refreshInterval }}
+  {{- $baseUrl := include "miniflux.baseUrl" . -}}
+  {{- if $baseUrl }}
+  baseUrl: {{ $baseUrl | quote }}
+  {{- end }}
 {{- end }}

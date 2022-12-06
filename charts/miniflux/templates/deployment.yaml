@@ -97,6 +97,12 @@ spec:
             - name: METRICS_ALLOWED_NETWORKS
               value: "0.0.0.0/0"
             {{- end }}
+            - name: BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ include "miniflux.configmap" . }}
+                  key: baseUrl
+                  optional: true
           volumeMounts:
           {{- if .Values.auth.oauth2.enabled }}
             - mountPath: /secrets
