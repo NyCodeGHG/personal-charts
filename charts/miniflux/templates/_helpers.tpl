@@ -158,5 +158,5 @@ Determine ConfigMap name
 Determine Base URL.
 */}}
 {{- define "miniflux.baseUrl" -}}
-{{ .Values.baseUrl | default .Values.ingressRoute.host }}
+{{ .Values.baseUrl }}
 {{- end }}
