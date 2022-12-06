@@ -1,0 +1,29 @@
+{{- if .Values.ingressRoute.enabled -}}
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: {{ include "miniflux.fullname" . }}
+  labels:
+    {{- include "miniflux.labels" . | nindent 4 }}
+spec:
+  {{- with .Values.ingressRoute.entryPoints }}
+  entryPoints:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.ingressRoute.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  routes:
+    - kind: Rule
+      match: {{ printf "Host(`%s`) && PathPrefix(`/metrics`)" .Values.ingressRoute.host }}
+      services:
+        - name: noop@internal
+          kind: TraefikService
+    - kind: Rule
+      match: {{ printf "Host(`%s`)" .Values.ingressRoute.host }}
+      services:
+        - name: {{ include "miniflux.fullname" . }}
+          kind: Service
+          port: http
+{{- end -}}

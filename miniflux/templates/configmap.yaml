@@ -1,0 +1,18 @@
+{{- if .Values.auth.oauth2.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "miniflux.configmap" . }}
+  labels:
+    {{- include "miniflux.labels" . | nindent 4 }}
+data:
+  enableUserCreation: {{ .Values.auth.oauth2.enableUserCreation | default true | quote }}
+  provider: {{ required "OAuth2 Provider is required. Please set auth.oauth2.provider" .Values.auth.oauth2.provider | quote }}
+  redirectUrl: {{ required "OAuth2 Redirect Url is required. Please set auth.oauth2.redirectUrl" .Values.auth.oauth2.redirectUrl | quote }}
+  {{- if eq .Values.auth.oauth2.provider "oidc" }}
+  discoveryEndpoint: {{ required "OpenID Connect Discovery Endpoint is required when provider is 'oidc'. Please set auth.oauth2.discoveryEndpoint" .Values.auth.oauth2.discoveryEndpoint | quote }}
+  {{- else if .Values.auth.oauth2.discoveryEndpoint | quote }}
+  discoveryEndpoint: {{ .Values.auth.oauth2.discoveryEndpoint | quote }}
+  {{- end }}
+  metricsRefreshInterval: {{ .Values.metrics.prometheus.refreshInterval }}
+{{- end }}

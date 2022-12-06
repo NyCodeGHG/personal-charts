@@ -1,0 +1,20 @@
+{{- if and .Values.metrics.prometheus.enabled .Values.metrics.prometheus.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "miniflux.fullname" . }}
+  labels:
+    {{- include "miniflux.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "miniflux.selectorLabels" . | nindent 6 }}
+  namespaceSelector:
+    matchNames:
+      - {{ printf "%s" .Release.Namespace | quote }}
+  endpoints:
+    - port: http
+      {{- if.Values.metrics.prometheus.serviceMonitor.interval }}
+      interval: {{ .Values.metrics.prometheus.serviceMonitor.interval }}
+      {{- end }}
+{{- end }}
