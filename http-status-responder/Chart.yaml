@@ -1,0 +1,8 @@
+apiVersion: v2
+name: http-status-responder
+description: A http 418 microservice
+
+type: application
+
+version: 0.1.0
+appVersion: "0.1.0"
