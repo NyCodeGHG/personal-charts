@@ -1,0 +1,19 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "regexManagers": [
+    {
+      "description": "Update miniflux docker image references",
+      "fileMatch": [
+        "^charts\\/miniflux\\/Chart\\.yaml$"
+      ],
+      "matchStrings": [
+        "appVersion: \"(?<currentValue>.*?)\"\\s+"
+      ],
+      "depNameTemplate": "miniflux/miniflux",
+      "datasourceTemplate": "docker"
+    }
+  ]
+}
