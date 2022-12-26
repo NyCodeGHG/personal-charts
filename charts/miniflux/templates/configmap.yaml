@@ -14,7 +14,9 @@ data:
   {{- else if .Values.auth.oauth2.discoveryEndpoint | quote }}
   discoveryEndpoint: {{ .Values.auth.oauth2.discoveryEndpoint | quote }}
   {{- end }}
+  {{- if .Values.metrics.prometheus.refreshInterval }}
   metricsRefreshInterval: {{ .Values.metrics.prometheus.refreshInterval }}
+  {{- end }}
   {{- $baseUrl := include "miniflux.baseUrl" . -}}
   {{- if $baseUrl }}
   baseUrl: {{ $baseUrl | quote }}
