@@ -125,8 +125,8 @@ Postgres Connection URL
 Wait for Postgres init-container
 */}}
 {{- define "miniflux.postgresql.wait-init-container" -}}
-{{- $customUser := include "postgresql.username" .Subcharts.postgresql }}
-{{- $postgresHost := include "postgresql.primary.fullname" .Subcharts.postgresql }}
+{{- $customUser := include "postgresql.username" .Subcharts.postgresql -}}
+{{- $postgresHost := include "postgresql.primary.fullname" .Subcharts.postgresql -}}
 - name: wait-for-postgres
   image: {{ include "postgresql.image" .Subcharts.postgresql }}
   command:

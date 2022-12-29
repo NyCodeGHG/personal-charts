@@ -1,0 +1,35 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "miniflux.fullname" . }}
+  labels: {{- include "miniflux.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels: {{- include "miniflux.selectorLabels" . | nindent 6 }}
+  {{- if .Values.networkPolicy.allowExternal }}
+  ingress:
+    - ports:
+        - port: {{ .Values.containerPorts.web }}
+  {{- else }}
+  ingress: []
+  {{- end }}
+  egress:
+      # Allow DNS Traffic
+    - ports:
+        - port: 53
+          protocol: UDP
+      # Allow PostgreSQL Traffic
+    - ports:
+        - port: {{ include "postgresql.service.port" .Subcharts.postgresql }}
+      to:
+        - podSelector:
+            matchLabels: {{- include "common.labels.matchLabels" .Subcharts.postgresql | nindent 14 }}
+    - ports:
+        {{- range .Values.networkPolicy.allowOutgoingPorts }}
+        - port: {{ . }}
+        {{- end }}
+      to:
+        - ipBlock:
+            cidr: 0.0.0.0/0
+{{- end }}

@@ -22,7 +22,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "miniflux.serviceAccountName" . }}
+      automountServiceAccountToken: false
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       initContainers:
@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: {{ .Values.containerPorts.web }}
               protocol: TCP
           livenessProbe:
             exec:
@@ -52,7 +52,7 @@ spec:
                   name: {{ include "postgresql.secretName" .Subcharts.postgresql }}
                   key: {{ include "postgresql.userPasswordKey" .Subcharts.postgresql }}
             - name: DATABASE_URL
-              value: "postgres://{{ include "postgresql.username" .Subcharts.postgresql }}:$(POSTGRES_PASSWORD)@{{ include "postgresql.primary.fullname" .Subcharts.postgresql }}/{{ include "postgresql.database" .Subcharts.postgresql }}?sslmode=disable"
+              value: {{ include "miniflux.postgresql.connection-url" . }}
             {{- if .Values.debug }}
             - name: DEBUG
               value: "1"
@@ -103,14 +103,14 @@ spec:
                   name: {{ include "miniflux.configmap" . }}
                   key: baseUrl
                   optional: true
-          volumeMounts:
           {{- if .Values.auth.oauth2.enabled }}
+          volumeMounts:
             - mountPath: /secrets
               name: oauth
               readOnly: true
           {{- end }}
+      {{- if .Values.auth.oauth2.enabled }}
       volumes:
-        {{- if .Values.auth.oauth2.enabled }}
         - name: oauth
           secret:
             secretName: {{ include "miniflux.oauth-secret" . }}
@@ -119,7 +119,7 @@ spec:
                 path: oauth_client_id
               - key: {{ include "miniflux.oauth-secret-client-secret-key" . }}
                 path: oauth_client_secret
-        {{- end }}
+      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
