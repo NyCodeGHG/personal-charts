@@ -130,7 +130,6 @@ metrics:
 
 networkPolicy:
   enabled: true
-  allowExternal: false
   allowOutgoingPorts:
     - 80
     - 443

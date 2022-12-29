@@ -7,13 +7,9 @@ metadata:
 spec:
   podSelector:
     matchLabels: {{- include "miniflux.selectorLabels" . | nindent 6 }}
-  {{- if .Values.networkPolicy.allowExternal }}
   ingress:
     - ports:
         - port: {{ .Values.containerPorts.web }}
-  {{- else }}
-  ingress: []
-  {{- end }}
   egress:
       # Allow DNS Traffic
     - ports:
