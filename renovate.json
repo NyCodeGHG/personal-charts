@@ -10,9 +10,9 @@
         "^charts\\/miniflux\\/Chart\\.yaml$"
       ],
       "matchStrings": [
-        "appVersion: \"(?<currentValue>.*?)\"\\s+"
+        "appVersion: \"(?<currentValue>.*?)\""
       ],
-      "depNameTemplate": "miniflux/miniflux",
+      "depNameTemplate": "docker.io/miniflux/miniflux",
       "datasourceTemplate": "docker"
     }
   ]
