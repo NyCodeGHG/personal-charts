@@ -12,7 +12,7 @@
       "matchStrings": [
         "appVersion: \"(?<currentValue>.*?)\""
       ],
-      "depNameTemplate": "docker.io/miniflux/miniflux",
+      "depNameTemplate": "miniflux/miniflux",
       "datasourceTemplate": "docker"
     }
   ]
