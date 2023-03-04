@@ -14,7 +14,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup Git Identity
-        uses: fregante/setup-git-user@v1.1.0
+        uses: fregante/setup-git-user@v2.0.1
       - name: Add external Helm repos
         run: |
           helm repo add bitnami https://charts.bitnami.com/bitnami
